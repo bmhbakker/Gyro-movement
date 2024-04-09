@@ -10,20 +10,21 @@ public class PlayerController : MonoBehaviour {
     public float maxSpeed = 10f;
     public float acceleration = 0.5f;
     public float deceleration = 5f;
+    public float rotationSpeed = 5f;
 
-    private void Awake() {
+    private void Start() {
         controller = GetComponent<CharacterController>();
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void FixedUpdate() {
         Move();
-
-        if (Input.GetKey(KeyCode.Space) && controller.isGrounded) {
-        }
+        Rotate();
     }
 
     private void Move() {
-        Vector3 desiredMoveDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+        Vector3 desiredMoveDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        desiredMoveDirection.Normalize();
         Vector3 targetVelocity = desiredMoveDirection * maxSpeed;
 
         currentVelocity = Vector3.Lerp(currentVelocity, targetVelocity, Time.deltaTime * acceleration);
@@ -32,9 +33,11 @@ public class PlayerController : MonoBehaviour {
             currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, Time.deltaTime * deceleration);
         }
 
-        currentVelocity = transform.TransformDirection(currentVelocity);
-
         controller.Move(currentVelocity * Time.deltaTime);
+    }
+
+    private void Rotate() {
+        transform.Rotate(Vector3.up, lookInput.x * rotationSpeed * Time.deltaTime);
     }
 
     public void OnMove(InputValue value) {
@@ -43,6 +46,5 @@ public class PlayerController : MonoBehaviour {
 
     private void OnLook(InputValue value) {
         lookInput = value.Get<Vector2>();
-        Debug.Log(lookInput);
     }
 }
