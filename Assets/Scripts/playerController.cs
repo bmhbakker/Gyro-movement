@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour {
         moveInput = value.Get<Vector2>();
     }
 
-    private void OnLook(InputValue value) {
+    public void OnLook(InputValue value) {
         lookInput = value.Get<Vector2>();
     }
 }
